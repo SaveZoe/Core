@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ComplexExamples {
 
@@ -146,15 +147,24 @@ public class ComplexExamples {
         Key: Jack
         Value: 1
 */
+        List<Integer> array = Arrays.asList(3, 4, 2, 7);
+        int sum = 10;
 
-        sumPair();
+        System.out.println();
+        System.out.println(array + ", " + sum + " -> " + sumPair(array, sum));
         /*
         Task2
-
             [3, 4, 2, 7], 10 -> [3, 7] - вывести пару менно в скобках, которые дают сумму - 10
+
          */
 
 
+        fuzzySearch("car", "ca6$$#_rtwheel"); // true
+        fuzzySearch("cwhl", "cartwheel"); // true
+        fuzzySearch("cwhee", "cartwheel"); // true
+        fuzzySearch("cartwheel", "cartwheel"); // tru
+        fuzzySearch("cwheeel", "cartwheel"); // false
+        fuzzySearch("lw", "cartwheel"); // false
 
         /*
         Task3
@@ -171,23 +181,32 @@ public class ComplexExamples {
 
     }
 
-    private static void sumPair() {
-        Scanner in = new Scanner(System.in);
-        List<Integer> array = new ArrayList<>();
-        array.add(in.nextInt());
-        array.add(in.nextInt());
-        array.add(in.nextInt());
-        array.add(in.nextInt());
-        int sum = in.nextInt();
+    private static void fuzzySearch(String str1, String str2) {
+        List<Character> characterList = new ArrayList<>(str1.chars().mapToObj(c -> (char) c).toList());
+        List<Character> characterList1 = new ArrayList<>(str2.chars().mapToObj(c -> (char) c).toList());
+        characterList1.removeIf(character -> !characterList.contains(character));
+        System.out.println(characterList1.equals(characterList));
 
-        for (int i = 0; i < array.size() - 1; i++) {
-            for (int j = 0; j < array.size() - 1; j++) {
+    }
 
+    private static List<Integer> sumPair(List<Integer> array, int sum) {
+
+        if (array.isEmpty()) return new ArrayList<>();
+
+        List<Integer> pair = new ArrayList<>();
+
+        for (int i = 0; i < array.size(); i++) {
+            int j = 1;
+            while (j < array.size()) {
+                if (array.get(j) + array.get(i) == sum) {
+                    pair.add(array.get(j));
+                    pair.add(array.get(i));
+                }
+                j++;
             }
         }
 
-        System.out.println(array.toString() + sum);
-
+        return pair;
     }
 
     private static void resultTask(Map<String, List<Person>> map) {
@@ -233,6 +252,7 @@ public class ComplexExamples {
     }
 
     private static Map<String, List<Person>> setMap(Person[] listPerson) {
-        return Arrays.stream(listPerson).sorted(Comparator.comparing(o -> o.id)).distinct().collect(Collectors.groupingBy(Person::getName));
+        return Arrays.stream(listPerson).sorted(Comparator.comparing(o -> o.id)).distinct()
+                .collect(Collectors.groupingBy(Person::getName));
     }
 }
